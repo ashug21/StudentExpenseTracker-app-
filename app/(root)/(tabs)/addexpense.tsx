@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import {
   Pressable,
@@ -21,6 +22,52 @@ export default function AddExpense() {
     { name: "Shopping", icon: "bag-outline" },
     { name: "Entertainment", icon: "game-controller-outline" },
   ];
+
+
+  const addUserExpense = async () => {
+    if (!expenseName || !amount || !category) {
+      alert("All Fields are Required!");
+      return;
+    }
+  
+    try {
+      const token = await SecureStore.getItemAsync("token");
+  
+      const response = await fetch(
+        "http://192.168.87.6:5500/expense/add",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            expenseName,
+            amount: Number(amount),
+            category,
+          }),
+        }
+      );
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+  
+      setExpenseName("");
+      setAmount("");
+      setCategory("");
+  
+      alert("Expense Added Successfully");
+    } 
+    catch (error) {
+     
+      console.log(error);
+      alert(error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -93,7 +140,7 @@ export default function AddExpense() {
           ))}
         </View>
 
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={addUserExpense}>
           <Text style={styles.buttonText}>Add New Expense</Text>
         </Pressable>
       </ScrollView>

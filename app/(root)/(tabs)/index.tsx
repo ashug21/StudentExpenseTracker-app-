@@ -1,17 +1,74 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
+import { useFocusEffect, useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+import { useCallback, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
   const router = useRouter();
+  const [data, setData] = useState([]);
 
+  const [emoji , setEmoji] = useState("👋🏻");
+
+
+
+  const emojiSetter = (category) => {
+    if (category === "Transport") {
+      return "🚗";
+    }
+  
+    if (category === "Food") {
+      return "🍔";
+    }
+  
+    if (category === "Shopping") {
+      return "🛍️";
+    }
+  
+    if (category === "Entertainment") {
+      return "🎮";
+    }
+  
+    return "💰";
+  };
+
+  const getUserExpenses = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("token");
+      const res = await fetch("http://192.168.87.6:5500/expense/user", {
+        method: "GET",
+
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message);
+
+        return;
+      }
+
+      setData(data.expenses || []);
+    } catch (error) {
+      console.log(error);
+
+      alert(error);
+    }
+  };
+
+  useFocusEffect(
+
+    useCallback(() => {
+  
+      getUserExpenses();
+  
+    }, [])
+  
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -61,34 +118,24 @@ export default function Home() {
 
         <Text style={styles.sectionTitle}>Recent Expenses</Text>
 
-        <View style={styles.expenseCard}>
-          <View>
-            <Text style={styles.expenseName}>🍔 Burger King</Text>
-            <Text style={styles.expenseCategory}>Food</Text>
+        {data.length === 0 ? (
+          <View style={styles.expenseCard}>
+            <Text style={styles.expenseCategory}>No Expenses Added</Text>
           </View>
+        ) : (
+          // only typescript error dont worry
+          data.map((expense) => (
+            <View key={expense.id} style={styles.expenseCard}>
+              <View>
+                <Text style={styles.expenseName}> {emojiSetter(expense.category)} {expense.expensename}</Text>
 
-          <Text style={styles.expensePrice}>₹250</Text>
-        </View>
+                <Text style={styles.expenseCategory}>{expense.category}</Text>
+              </View>
 
-        <View style={styles.expenseCard}>
-          <View>
-            <Text style={styles.expenseName}>🚕 Uber</Text>
-            <Text style={styles.expenseCategory}>Transport</Text>
-          </View>
-
-          <Text style={styles.expensePrice}>₹180</Text>
-        </View>
-
-        <View style={styles.expenseCard}>
-          <View>
-            <Text style={styles.expenseName}>☕ Coffee</Text>
-            <Text style={styles.expenseCategory}>Food</Text>
-          </View>
-
-          <Text style={styles.expensePrice}>₹120</Text>
-        </View>
-
-     
+              <Text style={styles.expensePrice}>₹{expense.amount}</Text>
+            </View>
+          ))
+        )}
       </ScrollView>
     </SafeAreaView>
   );

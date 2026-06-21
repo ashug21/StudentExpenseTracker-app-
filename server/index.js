@@ -4,9 +4,11 @@ const pool = require("./db");
 const app = express();
 const PORT = process.env.PORT || 5500;
 const authRoutes = require("./routes/authRoutes");
+const expenseRoutes = require("./routes/expenseRoutes");
 
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/expense", expenseRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend Working");
