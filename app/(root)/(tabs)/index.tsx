@@ -10,8 +10,8 @@ export default function Home() {
   const [data, setData] = useState([]);
 
   const [income, setIncome] = useState(null);
+  const [name, setName] = useState("");
 
-  const [emoji, setEmoji] = useState("👋🏻");
 
   const calculateTotalExpenses = () => {
     return data.reduce((total, expense) => {
@@ -30,7 +30,6 @@ export default function Home() {
     return balance;
 
   }
-
   const getUserIncome = async () => {
     try {
       const token = await SecureStore.getItemAsync("token");
@@ -48,7 +47,7 @@ export default function Home() {
         alert(data.message);
         return;
       }
-
+      setName(data.name ||"");
       setIncome(data.income || 0);
     } catch (error) {
       console.log(error);
@@ -102,6 +101,10 @@ export default function Home() {
     }
   };
 
+
+  
+
+
   useFocusEffect(
     useCallback(() => {
       getUserExpenses();
@@ -115,7 +118,7 @@ export default function Home() {
         <View style={styles.header}>
           <View>
             <Text style={styles.greeting}>Good Morning 👋</Text>
-            <Text style={styles.name}>Ashmeet</Text>
+            <Text style={styles.name}>{name?name:"Client"}</Text>
           </View>
         </View>
 
@@ -172,7 +175,7 @@ export default function Home() {
           // only typescript error dont worry
           data.map((expense) => (
             <View key={expense.id} style={styles.expenseCard}>
-              <View>
+              <View >
                 <Text style={styles.expenseName}>
                   {" "}
                   {emojiSetter(expense.category)} {expense.expensename}

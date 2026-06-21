@@ -105,6 +105,7 @@ const setUserIncome = async (req, res) => {
     }
   };
 
+
   const getUserIncome = async(req,res) => {
     
     const user_id = req.user.id;
@@ -120,6 +121,7 @@ const setUserIncome = async (req, res) => {
     });
   }
   return res.status(200).json({
+    name: req.user.name,
     income: result.rows[0].income,
   });
   }
