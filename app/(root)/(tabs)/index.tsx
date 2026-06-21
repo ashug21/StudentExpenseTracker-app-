@@ -9,27 +9,69 @@ export default function Home() {
   const router = useRouter();
   const [data, setData] = useState([]);
 
-  const [emoji , setEmoji] = useState("👋🏻");
+  const [income, setIncome] = useState(null);
+
+  const [emoji, setEmoji] = useState("👋🏻");
+
+  const calculateTotalExpenses = () => {
+    return data.reduce((total, expense) => {
+      return total + Number(expense.amount);
+    }, 0);
+  };
 
 
+  const calculateBalance = () => {
+    const expense = calculateTotalExpenses();
 
-  const emojiSetter = (category) => {
+    if(income == null){
+      return 0;
+    }
+    const balance = income - expense;
+    return balance;
+
+  }
+
+  const getUserIncome = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("token");
+
+      const res = await fetch("http://192.168.87.6:5500/expense/income", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message);
+        return;
+      }
+
+      setIncome(data.income || 0);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const emojiSetter = (category: string) => {
     if (category === "Transport") {
       return "🚗";
     }
-  
+
     if (category === "Food") {
       return "🍔";
     }
-  
+
     if (category === "Shopping") {
       return "🛍️";
     }
-  
+
     if (category === "Entertainment") {
       return "🎮";
     }
-  
+
     return "💰";
   };
 
@@ -61,13 +103,10 @@ export default function Home() {
   };
 
   useFocusEffect(
-
     useCallback(() => {
-  
       getUserExpenses();
-  
+      getUserIncome();
     }, [])
-  
   );
 
   return (
@@ -83,17 +122,24 @@ export default function Home() {
         <View style={styles.balanceCard}>
           <Text style={styles.balanceLabel}>Total Balance</Text>
 
-          <Text style={styles.balanceAmount}>₹12,450</Text>
+          <Text style={styles.balanceAmount}>₹{calculateBalance()}</Text>
 
           <View style={styles.balanceStats}>
             <View>
               <Text style={styles.statLabel}>Income</Text>
-              <Text style={styles.income}>₹8,000</Text>
+
+              {income ? (
+                <Text style={styles.income}>₹{income}</Text>
+              ) : (
+                <Pressable onPress={() => router.push("/profile")}>
+                  <Text style={styles.income}>Set Income</Text>
+                </Pressable>
+              )}
             </View>
 
             <View>
               <Text style={styles.statLabel}>Expense</Text>
-              <Text style={styles.expense}>₹2,500</Text>
+              <Text style={styles.expense}>₹{calculateTotalExpenses()}</Text>
             </View>
           </View>
         </View>
@@ -127,7 +173,10 @@ export default function Home() {
           data.map((expense) => (
             <View key={expense.id} style={styles.expenseCard}>
               <View>
-                <Text style={styles.expenseName}> {emojiSetter(expense.category)} {expense.expensename}</Text>
+                <Text style={styles.expenseName}>
+                  {" "}
+                  {emojiSetter(expense.category)} {expense.expensename}
+                </Text>
 
                 <Text style={styles.expenseCategory}>{expense.category}</Text>
               </View>
