@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useCallback, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
@@ -11,6 +11,8 @@ export default function Home() {
 
   const [income, setIncome] = useState(null);
   const [name, setName] = useState("");
+
+  const [expenseCount , setExpenseCount] = useState(0);
 
 
   const calculateTotalExpenses = () => {
@@ -54,7 +56,61 @@ export default function Home() {
     }
   };
 
-  const emojiSetter = (category: string) => {
+  const emojiSetter = (category: string , expenseName : string) => {
+
+    const name = expenseName.toLowerCase();
+
+    if(name === "dinner" || name === "breakfast" || name === "lunch"){
+      return "🍽️";
+    }
+
+    if(name.includes("kfc")){
+      return "🍗"
+    }
+
+    if(name === "mcd" || name === "mcdonalds"){
+      return "🍟"
+    }
+
+    if(name === "dominos" || name === "pizza" || name === "pizzahut"){
+      return "🍕"
+    }
+
+    if (name.includes("coffee") || name === "starbucks") {
+      return "☕️";
+    }
+
+    if (name.includes("tea") || name.includes("chai")) {
+      return "🍵";
+    }
+
+    if (name === "gas" || name === "fuel" || name === "petrol" || name === "diesel") {
+      return "⛽️";
+    }
+
+    if (name === "mobile" || name === "phone" || name === "iphone" || name === "android" || name === "samsung") {
+      return "📱";
+    }
+
+
+    if(name === "laptop" || name === "computer" || name === "pc" || name.includes("macbook") || name.includes("dell")){
+      return "💻"
+    }
+
+
+
+    if(name.includes("gym")){
+      return "🏋🏼‍♂️";
+    }
+
+    if(name === "headphones" || name === "earphones"){
+      return "🎧";
+    }
+
+    if(name === "party" || name.includes("birthday")){
+      return "🥳🎁";
+    }
+
     if (category === "Transport") {
       return "🚗";
     }
@@ -102,6 +158,61 @@ export default function Home() {
   };
 
 
+  const countUserExpenses = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("token");
+      const res = await fetch("http://192.168.87.6:5500/expense/count", {
+        method: "GET",
+
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message);
+
+        return;
+      }
+
+      setExpenseCount(data.count || 0);
+    } catch (error) {
+      console.log(error);
+
+      alert(error);
+    }
+  };
+
+  const deleteExpense = async (id: number) => {
+    try {
+      const token = await SecureStore.getItemAsync("token");
+  
+      const res = await fetch(
+        `http://192.168.87.6:5500/expense/delete/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        Alert.alert("Error", data.message);
+        return;
+      }
+  
+      getUserExpenses();
+  
+      Alert.alert("Success", "Expense deleted");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   
 
 
@@ -109,6 +220,7 @@ export default function Home() {
     useCallback(() => {
       getUserExpenses();
       getUserIncome();
+      countUserExpenses();
     }, [])
   );
 
@@ -165,7 +277,7 @@ export default function Home() {
           </Pressable>
         </View>
 
-        <Text style={styles.sectionTitle}>Recent Expenses</Text>
+        <Text style={styles.sectionTitle}>Recent Expenses ({expenseCount})</Text>
 
         {data.length === 0 ? (
           <View style={styles.expenseCard}>
@@ -174,18 +286,42 @@ export default function Home() {
         ) : (
           // only typescript error dont worry
           data.map((expense) => (
-            <View key={expense.id} style={styles.expenseCard}>
-              <View >
+            <Pressable
+              key={expense.id}
+              style={styles.expenseCard}
+              onLongPress={() =>
+                Alert.alert(
+                  "Delete Expense",
+                  `Delete ${expense.expensename}?`,
+                  [
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: "Delete",
+                      style: "destructive",
+                      onPress: () => deleteExpense(expense.id),
+                    },
+                  ]
+                )
+              }
+            >
+              <View>
                 <Text style={styles.expenseName}>
-                  {" "}
-                  {emojiSetter(expense.category)} {expense.expensename}
+                  {emojiSetter(expense.category, expense.expensename)}{" "}
+                  {expense.expensename}
                 </Text>
-
-                <Text style={styles.expenseCategory}>{expense.category}</Text>
+          
+                <Text style={styles.expenseCategory}>
+                  {expense.category}
+                </Text>
               </View>
-
-              <Text style={styles.expensePrice}>₹{expense.amount}</Text>
-            </View>
+          
+              <Text style={styles.expensePrice}>
+                - ₹{expense.amount}
+              </Text>
+            </Pressable>
           ))
         )}
       </ScrollView>

@@ -126,10 +126,69 @@ const setUserIncome = async (req, res) => {
   });
   }
 
+  const deleteUserExpense = async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      const userId = req.user.id;
+  
+      const deletedExpense = await pool.query(
+        "DELETE FROM expenses WHERE id = $1 AND user_id = $2 RETURNING *",
+        [id, userId]
+      );
+  
+      if (deletedExpense.rows.length === 0) {
+        return res.status(404).json({
+          message: "Expense not found",
+        });
+      }
+  
+      res.status(200).json({
+        message: "Expense deleted successfully",
+      });
+    } catch (error) {
+      console.log(error);
+  
+      res.status(500).json({
+        message: "Server Error",
+      });
+    }
+  };
+
+
+  const countUserExpenses = async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized",
+        });
+      }
+  
+      const userId = req.user.id;
+  
+      const result = await pool.query(
+        `SELECT COUNT(*) AS count FROM expenses WHERE user_id = $1`,
+        [userId]
+      );
+  
+      return res.status(200).json({
+        count: Number(result.rows[0].count),
+      });
+    } catch (error) {
+      console.log(error);
+  
+      return res.status(500).json({
+        message: "Server Error",
+      });
+    }
+  };
+
 module.exports = {
   addUserExpense,
   getUserExpenses,
   setUserIncome,
-  getUserIncome
+  getUserIncome,
+  deleteUserExpense,
+  countUserExpenses
 };
 

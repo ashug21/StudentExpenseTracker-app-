@@ -7,6 +7,7 @@ import {
   Alert,
   Keyboard,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -19,6 +20,7 @@ const Profile = () => {
   const router = useRouter();
 
   const [income, setIncome] = useState("");
+  const [currency, setCurrency] = useState("INR");
 
   const handleLogout = async () => {
     await logout();
@@ -69,69 +71,184 @@ const Profile = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>Profile</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Text style={styles.heading}>Profile</Text>
 
-      <Text style={styles.subHeading}>Manage your financial settings.</Text>
+        <Text style={styles.subHeading}>Manage your financial settings.</Text>
 
-      <View style={styles.incomeCard}>
-        <View style={styles.iconContainer}>
-          <Ionicons name="cash-outline" size={26} color="#10B981" />
+        <View style={styles.incomeCard}>
+          <View style={styles.iconContainer}>
+            <Ionicons name="cash-outline" size={26} color="#10B981" />
+          </View>
+
+          <Text style={styles.cardTitle}>Monthly Income</Text>
+
+          <Text style={styles.cardSubtitle}>
+            Set or update your monthly income.
+          </Text>
+
+          <TextInput
+            placeholder="Enter Monthly Income"
+            placeholderTextColor="#94A3B8"
+            keyboardType="numeric"
+            returnKeyType="done"
+            onSubmitEditing={Keyboard.dismiss}
+            value={income}
+            onChangeText={setIncome}
+            style={styles.input}
+          />
+
+          <Pressable style={styles.saveButton} onPress={setUserIncome}>
+            <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
+
+            <Text style={styles.saveButtonText}>Save Income</Text>
+          </Pressable>
         </View>
 
-        <Text style={styles.cardTitle}>Monthly Income</Text>
+        <View style={styles.currencyCard}>
+          <View style={styles.iconContainer}>
+            <Ionicons name="globe-outline" size={26} color="#10B981" />
+          </View>
 
-        <Text style={styles.cardSubtitle}>
-          Set or update your monthly income.
-        </Text>
+          <Text style={styles.cardTitle}>Preferred Currency</Text>
 
-        <TextInput
-          placeholder="Enter Monthly Income"
-          placeholderTextColor="#94A3B8"
-          keyboardType="numeric"
-          returnKeyType="done"
-          onSubmitEditing={Keyboard.dismiss}
-          value={income}
-          onChangeText={setIncome}
-          style={styles.input}
-        />
+          <Text style={styles.cardSubtitle}>
+            Choose the currency used throughout the app.
+          </Text>
 
-        <Pressable style={styles.saveButton} onPress={setUserIncome}>
-          <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
+          <View style={styles.currencyOptions}>
+            <Pressable
+              style={[
+                styles.currencyOption,
+                currency === "INR" && styles.selectedCurrency,
+              ]}
+              onPress={() => setCurrency("INR")}
+            >
+              <Text style={styles.currencyEmoji}>🇮🇳</Text>
+              <Text
+                style={[
+                  styles.currencyText,
+                  currency === "INR" && styles.selectedCurrencyText,
+                ]}
+              >
+                INR (₹)
+              </Text>
+            </Pressable>
 
-          <Text style={styles.saveButtonText}>Save Income</Text>
+            <Pressable
+              style={[
+                styles.currencyOption,
+                currency === "AUD" && styles.selectedCurrency,
+              ]}
+              onPress={() => setCurrency("AUD")}
+            >
+              <Text style={styles.currencyEmoji}>🇦🇺</Text>
+              <Text
+                style={[
+                  styles.currencyText,
+                  currency === "AUD" && styles.selectedCurrencyText,
+                ]}
+              >
+                AUD (A$)
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={[
+                styles.currencyOption,
+                currency === "USD" && styles.selectedCurrency,
+              ]}
+              onPress={() => setCurrency("USD")}
+            >
+              <Text style={styles.currencyEmoji}>🇺🇸</Text>
+              <Text
+                style={[
+                  styles.currencyText,
+                  currency === "USD" && styles.selectedCurrencyText,
+                ]}
+              >
+                USD ($)
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={[
+                styles.currencyOption,
+                currency === "GBP" && styles.selectedCurrency,
+              ]}
+              onPress={() => setCurrency("GBP")}
+            >
+              <Text style={styles.currencyEmoji}>🇬🇧</Text>
+              <Text
+                style={[
+                  styles.currencyText,
+                  currency === "GBP" && styles.selectedCurrencyText,
+                ]}
+              >
+                GBP (£)
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={[
+                styles.currencyOption,
+                currency === "EUR" && styles.selectedCurrency,
+              ]}
+              onPress={() => setCurrency("EUR")}
+            >
+              <Text style={styles.currencyEmoji}>🇩🇪</Text>
+              <Text
+                style={[
+                  styles.currencyText,
+                  currency === "EUR" && styles.selectedCurrencyText,
+                ]}
+              >
+                EUR (€)
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={[
+                styles.currencyOption,
+                currency === "NZD" && styles.selectedCurrency,
+              ]}
+              onPress={() => setCurrency("NZD")}
+            >
+              <Text
+                style={[
+                  styles.currencyText,
+                  currency === "NZD" && styles.selectedCurrencyText,
+                ]}
+              >
+                🇳🇿 NZD (NZ$)
+              </Text>
+            </Pressable>
+          </View>
+
+          <Pressable style={styles.saveButton}>
+            <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
+            <Text style={styles.saveButtonText}>Save Currency</Text>
+          </Pressable>
+        </View>
+
+        <Pressable style={styles.logoutCard} onPress={handleLogout}>
+          <View style={styles.logoutLeft}>
+            <View style={styles.logoutIconContainer}>
+              <Ionicons name="log-out-outline" size={22} color="#EF4444" />
+            </View>
+
+            <View>
+              <Text style={styles.logoutTitle}>Logout</Text>
+
+              <Text style={styles.logoutDescription}>
+                Sign out of your account
+              </Text>
+            </View>
+          </View>
+
+          <Ionicons name="chevron-forward" size={20} color="#94A3B8" />
         </Pressable>
-      </View>
-
-      <Pressable
-  style={styles.logoutCard}
-  onPress={handleLogout}
->
-  <View style={styles.logoutLeft}>
-    <View style={styles.logoutIconContainer}>
-      <Ionicons
-        name="log-out-outline"
-        size={22}
-        color="#EF4444"
-      />
-    </View>
-
-    <View>
-      <Text style={styles.logoutTitle}>
-        Logout
-      </Text>
-
-      <Text style={styles.logoutDescription}>
-        Sign out of your account
-      </Text>
-    </View>
-  </View>
-
-  <Ionicons
-    name="chevron-forward"
-    size={20}
-    color="#94A3B8"
-  />
-</Pressable>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -261,11 +378,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 24,
     padding: 18,
-  
+
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  
+
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowRadius: 14,
@@ -273,15 +390,15 @@ const styles = StyleSheet.create({
       width: 0,
       height: 5,
     },
-  
+
     elevation: 3,
   },
-  
+
   logoutLeft: {
     flexDirection: "row",
     alignItems: "center",
   },
-  
+
   logoutIconContainer: {
     width: 52,
     height: 52,
@@ -291,16 +408,71 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 14,
   },
-  
+
   logoutTitle: {
     fontSize: 17,
     fontWeight: "700",
     color: "#EF4444",
   },
-  
+
   logoutDescription: {
     marginTop: 3,
     fontSize: 13,
     color: "#64748B",
+  },
+
+  currencyCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 28,
+    padding: 22,
+    marginBottom: 24,
+
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 14,
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+
+    elevation: 4,
+  },
+
+  currencyOptions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    marginTop: 4,
+  },
+
+  currencyOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F8FAFC",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+  },
+
+  currencyEmoji: {
+    fontSize: 18,
+    marginRight: 8,
+  },
+
+  currencyText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#0F172A",
+  },
+
+  selectedCurrency: {
+    backgroundColor: "#10B981",
+    borderColor: "#10B981",
+  },
+  
+  selectedCurrencyText: {
+    color: "#FFFFFF",
   },
 });
