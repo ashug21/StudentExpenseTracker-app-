@@ -2,7 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useCallback, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
@@ -10,13 +17,10 @@ export default function Home() {
   const [data, setData] = useState([]);
 
   const [income, setIncome] = useState(null);
+
   const [name, setName] = useState("");
-
-  const [expenseCount , setExpenseCount] = useState(0);
-
-
+  const [expenseCount, setExpenseCount] = useState(0);
   const [currency, setCurrency] = useState("INR");
-
 
   const calculateTotalExpenses = () => {
     return data.reduce((total, expense) => {
@@ -24,17 +28,15 @@ export default function Home() {
     }, 0);
   };
 
-
   const calculateBalance = () => {
     const expense = calculateTotalExpenses();
 
-    if(income == null){
+    if (income == null) {
       return 0;
     }
     const balance = income - expense;
     return balance;
-
-  }
+  };
   const getUserIncome = async () => {
     try {
       const token = await SecureStore.getItemAsync("token");
@@ -52,31 +54,30 @@ export default function Home() {
         alert(data.message);
         return;
       }
-      setName(data.name ||"");
+      setName(data.name || "");
       setIncome(data.income || 0);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const emojiSetter = (category: string , expenseName : string) => {
-
+  const emojiSetter = (category: string, expenseName: string) => {
     const name = expenseName.toLowerCase();
 
-    if(name === "dinner" || name === "breakfast" || name === "lunch"){
+    if (name === "dinner" || name === "breakfast" || name === "lunch") {
       return "🍽️";
     }
 
-    if(name.includes("kfc")){
-      return "🍗"
+    if (name.includes("kfc")) {
+      return "🍗";
     }
 
-    if(name === "mcd" || name === "mcdonalds"){
-      return "🍟"
+    if (name === "mcd" || name === "mcdonalds") {
+      return "🍟";
     }
 
-    if(name === "dominos" || name === "pizza" || name === "pizzahut"){
-      return "🍕"
+    if (name === "dominos" || name === "pizza" || name === "pizzahut") {
+      return "🍕";
     }
 
     if (name.includes("coffee") || name === "starbucks") {
@@ -87,30 +88,44 @@ export default function Home() {
       return "🍵";
     }
 
-    if (name === "gas" || name === "fuel" || name === "petrol" || name === "diesel") {
+    if (
+      name === "gas" ||
+      name === "fuel" ||
+      name === "petrol" ||
+      name === "diesel"
+    ) {
       return "⛽️";
     }
 
-    if (name === "mobile" || name === "phone" || name === "iphone" || name === "android" || name === "samsung") {
+    if (
+      name === "mobile" ||
+      name === "phone" ||
+      name === "iphone" ||
+      name === "android" ||
+      name === "samsung"
+    ) {
       return "📱";
     }
 
-
-    if(name === "laptop" || name === "computer" || name === "pc" || name.includes("macbook") || name.includes("dell")){
-      return "💻"
+    if (
+      name === "laptop" ||
+      name === "computer" ||
+      name === "pc" ||
+      name.includes("macbook") ||
+      name.includes("dell")
+    ) {
+      return "💻";
     }
 
-
-
-    if(name.includes("gym")){
+    if (name.includes("gym")) {
       return "🏋🏼‍♂️";
     }
 
-    if(name === "headphones" || name === "earphones"){
+    if (name === "headphones" || name === "earphones") {
       return "🎧";
     }
 
-    if(name === "party" || name.includes("birthday")){
+    if (name === "party" || name.includes("birthday")) {
       return "🥳🎁";
     }
 
@@ -160,7 +175,6 @@ export default function Home() {
     }
   };
 
-
   const countUserExpenses = async () => {
     try {
       const token = await SecureStore.getItemAsync("token");
@@ -191,69 +205,90 @@ export default function Home() {
   const deleteExpense = async (id: number) => {
     try {
       const token = await SecureStore.getItemAsync("token");
-  
-      const res = await fetch(
-        `http://192.168.87.6:5500/expense/delete/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-  
+
+      const res = await fetch(`http://192.168.87.6:5500/expense/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       const data = await res.json();
-  
+
       if (!res.ok) {
         Alert.alert("Error", data.message);
         return;
       }
-  
+
       getUserExpenses();
-  
+
       Alert.alert("Success", "Expense deleted");
     } catch (error) {
       console.log(error);
     }
   };
-  
-
 
   const getUserCurrency = async () => {
-      try {
-        const token = await SecureStore.getItemAsync("token");
-    
-        const response = await fetch(
-          "http://192.168.87.6:5500/expense/get-currency",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-    
-        const data = await response.json();
-    
-        if (!response.ok) {
-          Alert.alert("Error", data.message);
-          return;
+    try {
+      const token = await SecureStore.getItemAsync("token");
+
+      const response = await fetch(
+        "http://192.168.87.6:5500/expense/get-currency",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-    
-        setCurrency(data.currency || "INR");
-      } catch (error) {
-        console.log(error);
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        Alert.alert("Error", data.message);
+        return;
       }
-    };
 
+      setCurrency(data.currency || "INR");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    // "INR",
-    // "AUD",
-    // "USD",
-    // "GBP",
-    // "EUR",
-    // "NZD",
+  const exchangeRates = {
+    INR: 1,
+    AUD: 0.018,
+    USD: 0.012,
+    GBP: 0.0086,
+    EUR: 0.01,
+    NZD: 0.02,
+  };
 
+  const currencySymbols = {
+    INR: "₹",
+    AUD: "A$",
+    USD: "$",
+    GBP: "£",
+    EUR: "€",
+    NZD: "NZ$",
+  };
+
+  const convertAmount = (amount: number) => {
+    const rate = exchangeRates[currency as keyof typeof exchangeRates] || 1;
+
+    return (amount * rate).toFixed(2);
+  };
+
+  const getCurrencySymbol = () => {
+    return currencySymbols[currency as keyof typeof currencySymbols] || "₹";
+  };
+
+  // "INR",
+  // "AUD",
+  // "USD",
+  // "GBP",
+  // "EUR",
+  // "NZD",
 
   useFocusEffect(
     useCallback(() => {
@@ -270,21 +305,27 @@ export default function Home() {
         <View style={styles.header}>
           <View>
             <Text style={styles.greeting}>Good Morning 👋</Text>
-            <Text style={styles.name}>{name?name:"Client"}</Text>
+            <Text style={styles.name}>{name ? name : "Client"}</Text>
           </View>
         </View>
 
         <View style={styles.balanceCard}>
           <Text style={styles.balanceLabel}>Total Balance</Text>
 
-          <Text style={styles.balanceAmount}>₹{calculateBalance()}</Text>
+          <Text style={styles.balanceAmount}>
+            {getCurrencySymbol()}
+            {convertAmount(calculateBalance())}
+          </Text>
 
           <View style={styles.balanceStats}>
             <View>
               <Text style={styles.statLabel}>Income</Text>
 
               {income ? (
-                <Text style={styles.income}>₹{income}</Text>
+                <Text style={styles.income}>
+                  {getCurrencySymbol()}
+                  {convertAmount(Number(income))}
+                </Text>
               ) : (
                 <Pressable onPress={() => router.push("/profile")}>
                   <Text style={styles.income}>Set Income</Text>
@@ -294,7 +335,10 @@ export default function Home() {
 
             <View>
               <Text style={styles.statLabel}>Expense</Text>
-              <Text style={styles.expense}>₹{calculateTotalExpenses()}</Text>
+              <Text style={styles.expense}>
+                {getCurrencySymbol()}
+                {convertAmount(calculateTotalExpenses())}
+              </Text>
             </View>
           </View>
         </View>
@@ -317,7 +361,9 @@ export default function Home() {
           </Pressable>
         </View>
 
-        <Text style={styles.sectionTitle}>Recent Expenses ({expenseCount})</Text>
+        <Text style={styles.sectionTitle}>
+          Recent Expenses ({expenseCount})
+        </Text>
 
         <Text style={styles.guide}>(Hold to delete expenses)</Text>
 
@@ -326,7 +372,6 @@ export default function Home() {
             <Text style={styles.expenseCategory}>No Expenses Added</Text>
           </View>
         ) : (
-         
           // only typescript error dont worry
           data.map((expense) => (
             <Pressable
@@ -355,14 +400,13 @@ export default function Home() {
                   {emojiSetter(expense.category, expense.expensename)}{" "}
                   {expense.expensename}
                 </Text>
-          
-                <Text style={styles.expenseCategory}>
-                  {expense.category}
-                </Text>
+
+                <Text style={styles.expenseCategory}>{expense.category}</Text>
               </View>
-          
+
               <Text style={styles.expensePrice}>
-                - ₹{expense.amount}
+                - {getCurrencySymbol()}
+                {convertAmount(Number(expense.amount))}
               </Text>
             </Pressable>
           ))
@@ -521,9 +565,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#EF4444",
   },
-  guide : {
-    marginLeft : 22,
-    marginBottom : 15,
+  guide: {
+    marginLeft: 22,
+    marginBottom: 15,
     color: "#a5a3a2",
-  }
+  },
 });
