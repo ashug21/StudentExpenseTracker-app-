@@ -279,11 +279,14 @@ export default function Home() {
 
         <Text style={styles.sectionTitle}>Recent Expenses ({expenseCount})</Text>
 
+        <Text style={styles.guide}>(Hold to delete expenses)</Text>
+
         {data.length === 0 ? (
           <View style={styles.expenseCard}>
             <Text style={styles.expenseCategory}>No Expenses Added</Text>
           </View>
         ) : (
+         
           // only typescript error dont worry
           data.map((expense) => (
             <Pressable
@@ -478,4 +481,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#EF4444",
   },
+  guide : {
+    marginLeft : 22,
+    marginBottom : 15,
+    color: "#a5a3a2",
+  }
 });
