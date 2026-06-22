@@ -1,8 +1,8 @@
 import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -68,6 +68,75 @@ const Profile = () => {
       Alert.alert("Error", error.message || "Something went wrong");
     }
   };
+
+
+  const updateCurrency = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("token");
+  
+      const response = await fetch(
+        "http://192.168.87.6:5500/expense/update-currency",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            currency,
+          }),
+        }
+      );
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        Alert.alert("Error", data.message);
+        return;
+      }
+  
+      Alert.alert("Success", `Currency updated to ${currency}`);
+    } catch (error: any) {
+      console.log(error);
+  
+      Alert.alert("Error", error.message || "Something went wrong");
+    }
+  };
+
+
+
+  const getUserCurrency = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("token");
+  
+      const response = await fetch(
+        "http://192.168.87.6:5500/expense/get-currency",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        Alert.alert("Error", data.message);
+        return;
+      }
+  
+      setCurrency(data.currency || "INR");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getUserCurrency();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -225,7 +294,7 @@ const Profile = () => {
             </Pressable>
           </View>
 
-          <Pressable style={styles.saveButton}>
+          <Pressable onPress={updateCurrency} style={styles.saveButton}>
             <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
             <Text style={styles.saveButtonText}>Save Currency</Text>
           </Pressable>

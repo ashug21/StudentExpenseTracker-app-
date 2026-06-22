@@ -15,6 +15,9 @@ export default function Home() {
   const [expenseCount , setExpenseCount] = useState(0);
 
 
+  const [currency, setCurrency] = useState("INR");
+
+
   const calculateTotalExpenses = () => {
     return data.reduce((total, expense) => {
       return total + Number(expense.amount);
@@ -216,11 +219,48 @@ export default function Home() {
   
 
 
+  const getUserCurrency = async () => {
+      try {
+        const token = await SecureStore.getItemAsync("token");
+    
+        const response = await fetch(
+          "http://192.168.87.6:5500/expense/get-currency",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+    
+        const data = await response.json();
+    
+        if (!response.ok) {
+          Alert.alert("Error", data.message);
+          return;
+        }
+    
+        setCurrency(data.currency || "INR");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+
+    // "INR",
+    // "AUD",
+    // "USD",
+    // "GBP",
+    // "EUR",
+    // "NZD",
+
+
   useFocusEffect(
     useCallback(() => {
       getUserExpenses();
       getUserIncome();
       countUserExpenses();
+      getUserCurrency();
     }, [])
   );
 

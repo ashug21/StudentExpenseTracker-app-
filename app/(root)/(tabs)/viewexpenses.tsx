@@ -15,6 +15,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function ViewExpenses() {
   const [data, setData] = useState<any[]>([]);
 
+  const [currency, setCurrency] = useState("INR");
+
   const getUserExpenses = async () => {
     try {
       const token = await SecureStore.getItemAsync("token");
@@ -40,12 +42,7 @@ export default function ViewExpenses() {
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      getUserExpenses();
-    }, [])
-  );
-
+  
   const groupedExpenses = data.reduce((acc: any, expense: any) => {
     if (!acc[expense.category]) {
       acc[expense.category] = [];
@@ -100,6 +97,44 @@ export default function ViewExpenses() {
       console.log(error);
     }
   };
+
+
+
+   const getUserCurrency = async () => {
+        try {
+          const token = await SecureStore.getItemAsync("token");
+      
+          const response = await fetch(
+            "http://192.168.87.6:5500/expense/get-currency",
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+      
+          const data = await response.json();
+      
+          if (!response.ok) {
+            Alert.alert("Error", data.message);
+            return;
+          }
+      
+          setCurrency(data.currency || "INR");
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+
+      useFocusEffect(
+        useCallback(() => {
+          getUserExpenses();
+          getUserCurrency();
+        }, [])
+      );
+    
 
   return (
     <SafeAreaView style={styles.container}>

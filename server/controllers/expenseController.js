@@ -185,12 +185,107 @@ const setUserIncome = async (req, res) => {
 
 
 
+
+  const updateUserCurrency = async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized",
+        });
+      }
+  
+      const { currency } = req.body;
+  
+      const allowedCurrencies = [
+        "INR",
+        "AUD",
+        "USD",
+        "GBP",
+        "EUR",
+        "NZD",
+      ];
+  
+      if (!currency) {
+        return res.status(400).json({
+          message: "Currency is required",
+        });
+      }
+  
+      if (!allowedCurrencies.includes(currency)) {
+        return res.status(400).json({
+          message: "Invalid currency",
+        });
+      }
+  
+      const userId = req.user.id;
+  
+      await pool.query(
+        `UPDATE users
+         SET currency = $1
+         WHERE id = $2`,
+        [currency, userId]
+      );
+  
+      return res.status(200).json({
+        message: "Currency updated successfully",
+        currency,
+      });
+    } catch (error) {
+      console.log(error);
+  
+      return res.status(500).json({
+        message: "Server Error",
+      });
+    }
+  };
+
+
+
+
+
+  const getUserCurrency = async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized",
+        });
+      }
+  
+      const userId = req.user.id;
+  
+      const result = await pool.query(
+        `SELECT currency
+         FROM users
+         WHERE id = $1`,
+        [userId]
+      );
+  
+      if (result.rows.length === 0) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
+  
+      return res.status(200).json({
+        currency: result.rows[0].currency,
+      });
+    } catch (error) {
+      console.log(error);
+  
+      return res.status(500).json({
+        message: "Server Error",
+      });
+    }
+  };
+
 module.exports = {
   addUserExpense,
   getUserExpenses,
   setUserIncome,
   getUserIncome,
   deleteUserExpense,
-  countUserExpenses
+  countUserExpenses,
+  updateUserCurrency,
+  getUserCurrency
 };
 
