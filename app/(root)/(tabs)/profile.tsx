@@ -39,7 +39,7 @@ const Profile = () => {
       const token = await SecureStore.getItemAsync("token");
 
       const response = await fetch(
-        "http://192.168.87.6:5500/expense/set-income",
+        "https://spendly-api-3e2b.onrender.com/expense/set-income",
         {
           method: "POST",
           headers: {
@@ -75,7 +75,7 @@ const Profile = () => {
       const token = await SecureStore.getItemAsync("token");
   
       const response = await fetch(
-        "http://192.168.87.6:5500/expense/update-currency",
+        "https://spendly-api-3e2b.onrender.com/expense/update-currency",
         {
           method: "PUT",
           headers: {
@@ -110,7 +110,7 @@ const Profile = () => {
       const token = await SecureStore.getItemAsync("token");
   
       const response = await fetch(
-        "http://192.168.87.6:5500/expense/get-currency",
+        "https://spendly-api-3e2b.onrender.com/expense/get-currency",
         {
           method: "GET",
           headers: {

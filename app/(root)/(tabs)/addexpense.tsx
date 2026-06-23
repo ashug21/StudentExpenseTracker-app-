@@ -35,7 +35,7 @@ export default function AddExpense() {
     }
     try {
       const token = await SecureStore.getItemAsync("token");
-      const response = await fetch("http://192.168.87.6:5500/expense/add", {
+      const response = await fetch("https://spendly-api-3e2b.onrender.com/expense/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -27,7 +27,8 @@ export default function SignUp() {
       }
 
       const response = await fetch(
-        "http://192.168.87.6:5500/api/auth/register",
+        // "http://192.168.87.6:5500/api/auth/register"
+        "https://spendly-api-3e2b.onrender.com/api/auth/register",
         {
           method: "POST",
           headers: {

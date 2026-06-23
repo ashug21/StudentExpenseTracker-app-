@@ -21,7 +21,7 @@ export default function ViewExpenses() {
     try {
       const token = await SecureStore.getItemAsync("token");
 
-      const res = await fetch("http://192.168.87.6:5500/expense/user", {
+      const res = await fetch("https://spendly-api-3e2b.onrender.com/expense/user", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -76,7 +76,7 @@ export default function ViewExpenses() {
     try {
       const token = await SecureStore.getItemAsync("token");
 
-      const res = await fetch(`http://192.168.87.6:5500/expense/delete/${id}`, {
+      const res = await fetch(`https://spendly-api-3e2b.onrender.com/expense/delete/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -105,7 +105,7 @@ export default function ViewExpenses() {
           const token = await SecureStore.getItemAsync("token");
       
           const response = await fetch(
-            "http://192.168.87.6:5500/expense/get-currency",
+            "https://spendly-api-3e2b.onrender.com/expense/get-currency",
             {
               method: "GET",
               headers: {

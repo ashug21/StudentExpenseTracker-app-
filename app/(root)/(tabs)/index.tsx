@@ -41,7 +41,7 @@ export default function Home() {
     try {
       const token = await SecureStore.getItemAsync("token");
 
-      const res = await fetch("http://192.168.87.6:5500/expense/income", {
+      const res = await fetch("https://spendly-api-3e2b.onrender.com/expense/income", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -151,7 +151,7 @@ export default function Home() {
   const getUserExpenses = async () => {
     try {
       const token = await SecureStore.getItemAsync("token");
-      const res = await fetch("http://192.168.87.6:5500/expense/user", {
+      const res = await fetch("https://spendly-api-3e2b.onrender.com/expense/user", {
         method: "GET",
 
         headers: {
@@ -178,7 +178,7 @@ export default function Home() {
   const countUserExpenses = async () => {
     try {
       const token = await SecureStore.getItemAsync("token");
-      const res = await fetch("http://192.168.87.6:5500/expense/count", {
+      const res = await fetch("https://spendly-api-3e2b.onrender.com/expense/count", {
         method: "GET",
 
         headers: {
@@ -206,7 +206,7 @@ export default function Home() {
     try {
       const token = await SecureStore.getItemAsync("token");
 
-      const res = await fetch(`http://192.168.87.6:5500/expense/delete/${id}`, {
+      const res = await fetch(`https://spendly-api-3e2b.onrender.com/expense/delete/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -233,7 +233,7 @@ export default function Home() {
       const token = await SecureStore.getItemAsync("token");
 
       const response = await fetch(
-        "http://192.168.87.6:5500/expense/get-currency",
+        "https://spendly-api-3e2b.onrender.com/expense/get-currency",
         {
           method: "GET",
           headers: {

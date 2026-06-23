@@ -1,7 +1,32 @@
 const pool = require("../db");
 
+// const addUserExpense = async (req, res) => {
+//   const { expenseName, amount, category } = req.body;
+
+//   try {
+//     if (!req.user) {
+//       return res.status(401).json({ message: "UnAuthorized" });
+//     }
+
+//     const user_id = req.user.id;
+
+//     const result = await pool.query(
+//       `Insert into expenses(user_id , expenseName , amount , category) Values ($1, $2, $3, $4) Returning *`,
+//       [user_id, expenseName, amount, category]
+//     );
+
+//     return res
+//       .status(200)
+//       .json({ message: "Expense Added Successfully", expense: result.rows[0] });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
+
 const addUserExpense = async (req, res) => {
-  const { expenseName, amount, category } = req.body;
+  const { expenseName, amount, category, currency } = req.body;
 
   try {
     if (!req.user) {
@@ -11,19 +36,20 @@ const addUserExpense = async (req, res) => {
     const user_id = req.user.id;
 
     const result = await pool.query(
-      `Insert into expenses(user_id , expenseName , amount , category) Values ($1, $2, $3, $4) Returning *`,
-      [user_id, expenseName, amount, category]
+      `INSERT INTO expenses(user_id, expenseName, amount, category, currency) 
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [user_id, expenseName, amount, category, currency ?? "INR"]
     );
 
-    return res
-      .status(200)
-      .json({ message: "Expense Added Successfully", expense: result.rows[0] });
+    return res.status(200).json({
+      message: "Expense Added Successfully",
+      expense: result.rows[0],
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 
 const getUserExpenses = async (req, res) => {
