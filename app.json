@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "",
+    "name": "Spendly",
     "slug": "StudentExpenseTracker",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,12 +8,10 @@
     "scheme": "studentexpensetracker",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.StudentExpenseTracker"
     },
-
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#10B981",
@@ -23,12 +21,10 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.StudentExpenseTracker"
     },
-
     "web": {
       "output": "static",
       "favicon": "./assets/images/MainLogo.png"
     },
-
     "plugins": [
       "expo-router",
       [
@@ -46,10 +42,15 @@
       "expo-secure-store",
       "expo-web-browser"
     ],
-
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "3c723b78-63e0-4d11-83ee-d5e6b258a6dd"
+      }
     }
   }
 }
