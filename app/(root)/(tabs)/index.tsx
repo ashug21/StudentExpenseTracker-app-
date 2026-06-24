@@ -255,13 +255,13 @@ export default function Home() {
     }
   };
 
-  const exchangeRates = {
+  const conversionRates = {
     INR: 1,
-    AUD: 0.018,
-    USD: 0.012,
-    GBP: 0.0086,
-    EUR: 0.01,
-    NZD: 0.02,
+    AUD: 65.46,
+    USD: 94.66,
+    GBP: 124.92,
+    EUR: 107.65,
+    NZD: 53.56,
   };
 
   const currencySymbols = {
@@ -273,12 +273,15 @@ export default function Home() {
     NZD: "NZ$",
   };
 
-  const convertAmount = (amount: number) => {
-    const rate = exchangeRates[currency as keyof typeof exchangeRates] || 1;
+  const convertAmount = (amountInINR: number) => {
+    if (currency === "INR") {
+      return amountInINR.toFixed(2);
+    }
 
-    return (amount * rate).toFixed(2);
+    return (
+      amountInINR / conversionRates[currency as keyof typeof conversionRates]
+    ).toFixed(2);
   };
-
   const getCurrencySymbol = () => {
     return currencySymbols[currency as keyof typeof currencySymbols] || "₹";
   };

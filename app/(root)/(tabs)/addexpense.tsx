@@ -1,7 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
+  Alert,
   Keyboard,
   Pressable,
   ScrollView,
@@ -16,6 +18,31 @@ export default function AddExpense() {
   const [expenseName, setExpenseName] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
+  const [currency, setCurrency] = useState("INR");
+
+  const conversionRates = {
+    INR: 1,
+    AUD: 65.46,
+    USD: 94.66,
+    GBP: 124.92,
+    EUR: 107.65,
+    NZD: 53.56,
+  };
+
+
+  const currencySymbols = {
+    INR: "₹",
+    AUD: "$",
+    USD: "$",
+    GBP: "£",
+    EUR: "€",
+    NZD: "$",
+  };
+
+  const getCurrencySymbol = () => {
+    return currencySymbols[currency as keyof typeof currencySymbols] || "₹";
+  };
+
 
   const categories = [
     { name: "Food", icon: "fast-food-outline" },
@@ -35,14 +62,22 @@ export default function AddExpense() {
     }
     try {
       const token = await SecureStore.getItemAsync("token");
-      const response = await fetch("https://spendly-api-3e2b.onrender.com/expense/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ expenseName, amount: Number(amount), category }),
-      });
+
+      const amountInINR =
+        Number(amount) *
+        conversionRates[currency as keyof typeof conversionRates];
+
+      const response = await fetch(
+        "https://spendly-api-3e2b.onrender.com/expense/add",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ expenseName, amount: amountInINR, category }),
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
         alert(data.message);
@@ -58,6 +93,39 @@ export default function AddExpense() {
       alert("Something went wrong");
     }
   };
+
+  const getUserCurrency = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("token");
+
+      const response = await fetch(
+        "https://spendly-api-3e2b.onrender.com/expense/get-currency",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        Alert.alert("Error", data.message);
+        return;
+      }
+
+      setCurrency(data.currency || "INR");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getUserCurrency();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,7 +149,7 @@ export default function AddExpense() {
             />
           </View>
 
-          <Text style={styles.label}>Amount</Text>
+          <Text style={styles.label}>({getCurrencySymbol()}) Amount</Text>
           <View style={styles.inputWrapper}>
             <Ionicons name="cash-outline" size={20} color="#64748B" />
             <TextInput

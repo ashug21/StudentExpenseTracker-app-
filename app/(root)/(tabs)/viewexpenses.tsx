@@ -21,7 +21,7 @@ export default function ViewExpenses() {
     try {
       const token = await SecureStore.getItemAsync("token");
 
-      const res = await fetch("https://spendly-api-3e2b.onrender.com/expense/user", {
+      const res = await fetch("http://192.168.87.6:5500/expense/user", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -42,7 +42,6 @@ export default function ViewExpenses() {
     }
   };
 
-  
   const groupedExpenses = data.reduce((acc: any, expense: any) => {
     if (!acc[expense.category]) {
       acc[expense.category] = [];
@@ -76,7 +75,7 @@ export default function ViewExpenses() {
     try {
       const token = await SecureStore.getItemAsync("token");
 
-      const res = await fetch(`https://spendly-api-3e2b.onrender.com/expense/delete/${id}`, {
+      const res = await fetch(`http://192.168.87.6:5500/expense/delete/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,43 +97,67 @@ export default function ViewExpenses() {
     }
   };
 
+  const getUserCurrency = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("token");
 
-
-   const getUserCurrency = async () => {
-        try {
-          const token = await SecureStore.getItemAsync("token");
-      
-          const response = await fetch(
-            "https://spendly-api-3e2b.onrender.com/expense/get-currency",
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-      
-          const data = await response.json();
-      
-          if (!response.ok) {
-            Alert.alert("Error", data.message);
-            return;
-          }
-      
-          setCurrency(data.currency || "INR");
-        } catch (error) {
-          console.log(error);
+      const response = await fetch(
+        "http://192.168.87.6:5500/expense/get-currency",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      };
-
-
-      useFocusEffect(
-        useCallback(() => {
-          getUserExpenses();
-          getUserCurrency();
-        }, [])
       );
-    
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        Alert.alert("Error", data.message);
+        return;
+      }
+
+      setCurrency(data.currency || "INR");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const conversionRates = {
+    INR: 1,
+    AUD: 65.46,
+    USD: 94.66,
+    GBP: 124.92,
+    EUR: 107.65,
+    NZD: 53.56,
+  };
+
+  const currencySymbols = {
+    INR: "₹",
+    AUD: "A$",
+    USD: "$",
+    GBP: "£",
+    EUR: "€",
+    NZD: "NZ$",
+  };
+
+  const convertAmount = (amountInINR: number) => {
+    if (currency === "INR") {
+      return amountInINR.toFixed(2);
+    }
+
+    return (
+      amountInINR / conversionRates[currency as keyof typeof conversionRates]
+    ).toFixed(2);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getUserExpenses();
+      getUserCurrency();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -176,7 +199,9 @@ export default function ViewExpenses() {
                 </View>
 
                 <View>
-                  <Text style={styles.categoryHeading}>{category} ({expenses.length})</Text>   
+                  <Text style={styles.categoryHeading}>
+                    {category} ({expenses.length})
+                  </Text>
                 </View>
               </View>
 
@@ -208,11 +233,14 @@ export default function ViewExpenses() {
                     </Text>
 
                     <Text style={styles.expenseDate}>
-                    {new Date(expense.created_at).toLocaleDateString()}
+                      {new Date(expense.created_at).toLocaleDateString()}
                     </Text>
                   </View>
 
-                  <Text style={styles.expenseAmount}>₹{expense.amount}</Text>
+                  <Text style={styles.expenseAmount}>
+                    {currencySymbols[currency as keyof typeof currencySymbols]}
+                    {convertAmount(Number(expense.amount))}
+                  </Text>
                 </Pressable>
               ))}
             </View>
