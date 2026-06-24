@@ -88,6 +88,10 @@ export default function Home() {
       return "🍵";
     }
 
+    if (name.includes("metro") || name.includes("train")) {
+      return "🚇";
+    }
+
     if (
       name === "gas" ||
       name === "fuel" ||
@@ -125,9 +129,81 @@ export default function Home() {
       return "🎧";
     }
 
+    if (name === "ps5" || name === "ps4" || name.includes("xbox")) {
+      return "🎮";
+    }
+
     if (name === "party" || name.includes("birthday")) {
       return "🥳🎁";
     }
+
+    if ( name.includes("electricity")) {
+      return "⚡️";
+    }
+
+    if (name.includes("water") && category == "Bills") {
+      return "💧";
+    }
+
+    if (name.includes("australia") && category == "Travel") {
+      return "🇦🇺✈️";
+    }
+
+    if (name.includes("germany") && category == "Travel") {
+      return "🇩🇪✈️";
+    }
+
+    if (name.includes("america") || name.includes("us") && category == "Travel") {
+      return "🇺🇸✈️";
+    }
+
+    if (name.includes("india") && category == "Travel") {
+      return "🇮🇳✈️";
+    }
+
+    if (name.includes("england") || name.includes("uk") && category == "Travel") {
+      return "🇬🇧✈️";
+    }
+
+    if (name.includes("newzealand") && category == "Travel") {
+      return "🇳🇿✈️";
+    }
+
+    if (name.includes("canada") && category == "Travel") {
+      return "🇨🇦✈️";
+    }
+    
+    if (name.includes("paris") || name.includes("france") && category == "Travel") {
+      return "🇫🇷✈️";
+    }
+
+    if (name.includes("thailand") || name.includes("phuket") && category == "Travel") {
+      return "🇹🇭✈️";
+    }
+
+    if (name.includes("indonesia") && category == "Travel") {
+      return "🇮🇩✈️";
+    }
+
+    if (name.includes("singapore") && category == "Travel") {
+      return "🇸🇬✈️";
+    }
+
+    if (name.includes("spain") && category == "Travel") {
+      return "🇪🇸✈️";
+    }
+
+    if (name.includes("italy") && category == "Travel") {
+      return "🇮🇹✈️";
+    }
+
+    if (name.includes("turkey") && category == "Travel") {
+      return "🇹🇷✈️";
+    }
+
+    if (name.includes("china") || name.includes("beijing") || name.includes("shanghai") && category == "Travel") {
+      return "🇨🇳✈️";
+    }    
 
     if (category === "Transport") {
       return "🚗";
@@ -145,7 +221,18 @@ export default function Home() {
       return "🎮";
     }
 
-    return "💰";
+    if (category === "Bills") {
+      return "💵";
+    }
+
+    if (category === "Travel") {
+      return "✈️";
+    }
+
+    if (category === "Other") {
+      return "🧩";
+    }
+
   };
 
   const getUserExpenses = async () => {
@@ -273,6 +360,26 @@ export default function Home() {
     NZD: "NZ$",
   };
 
+
+  const greetings = [
+    "Ready to track today? 💸",
+    "Every expense tells a story 📊",
+    "Stay on top of your finances 🚀",
+    "Small savings, big goals 🎯",
+    "Track smarter, spend better 💰",
+    "Welcome back to Spendly!!",
+ ];
+
+
+
+ const [greeting] = useState(() => {
+
+  const randomIndex = Math.floor(Math.random() * greetings.length);
+
+  return greetings[randomIndex];
+
+});
+
   const convertAmount = (amountInINR: number) => {
     if (currency === "INR") {
       return amountInINR.toFixed(2);
@@ -302,13 +409,15 @@ export default function Home() {
     }, [])
   );
 
+
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>Good Morning 👋</Text>
-            <Text style={styles.name}>{name ? name : "Client"}</Text>
+            <Text style={styles.greeting}>{greeting}</Text>
+            <Text style={styles.name}>Hello {name ? name : "Client"}👋🏻</Text>
           </View>
         </View>
 

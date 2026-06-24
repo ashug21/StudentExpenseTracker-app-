@@ -49,6 +49,9 @@ export default function AddExpense() {
     { name: "Transport", icon: "car-outline" },
     { name: "Shopping", icon: "bag-outline" },
     { name: "Entertainment", icon: "game-controller-outline" },
+    { name: "Bills", icon: "receipt-outline" },
+    { name: "Travel", icon: "airplane-outline" },
+    { name: "Other", icon: "ellipsis-horizontal-circle-outline" },
   ];
 
   const addUserExpense = async () => {

@@ -159,6 +159,53 @@ export default function ViewExpenses() {
     }, [])
   );
 
+
+  const totalExpenses = data.reduce((total, expense) => {
+    return total + Number(expense.amount);
+  }, 0);
+  
+  const foodExpenses =
+    groupedExpenses["Food"]?.reduce(
+      (total: number, expense: any) => total + Number(expense.amount),
+      0
+    ) || 0;
+  
+  const shoppingExpenses =
+    groupedExpenses["Shopping"]?.reduce(
+      (total: number, expense: any) => total + Number(expense.amount),
+      0
+    ) || 0;
+  
+  const transportExpenses =
+    groupedExpenses["Transport"]?.reduce(
+      (total: number, expense: any) => total + Number(expense.amount),
+      0
+    ) || 0;
+  
+  const entertainmentExpenses =
+    groupedExpenses["Entertainment"]?.reduce(
+      (total: number, expense: any) => total + Number(expense.amount),
+      0
+    ) || 0;
+
+    const billsExpenses =
+    groupedExpenses["Bills"]?.reduce(
+      (total: number, expense: any) => total + Number(expense.amount),
+      0
+    ) || 0;
+
+    const travelExpenses =
+    groupedExpenses["Travel"]?.reduce(
+      (total: number, expense: any) => total + Number(expense.amount),
+      0
+    ) || 0;
+
+    const otherExpenses =
+    groupedExpenses["Other"]?.reduce(
+      (total: number, expense: any) => total + Number(expense.amount),
+      0
+    ) || 0;
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -170,10 +217,92 @@ export default function ViewExpenses() {
         </View>
       </View>
 
+     
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
+
+<View style={styles.analyticsCard}>
+  <View style={styles.analyticsHeader}>
+    <Ionicons name="pie-chart" size={22} color="#10B981" />
+    <Text style={styles.analyticsTitle}>Spending Breakdown</Text>
+
+  </View>
+
+  <View style={styles.analyticsRow}>
+    <Text style={styles.analyticsLabel}>🍔 Food</Text>
+    <Text style={styles.analyticsValue}>
+      {totalExpenses
+        ? ((foodExpenses / totalExpenses) * 100).toFixed(1)
+        : 0}
+      %
+    </Text>
+  </View>
+
+  <View style={styles.analyticsRow}>
+    <Text style={styles.analyticsLabel}>🛍️ Shopping</Text>
+    <Text style={styles.analyticsValue}>
+      {totalExpenses
+        ? ((shoppingExpenses / totalExpenses) * 100).toFixed(1)
+        : 0}
+      %
+    </Text>
+  </View>
+
+  <View style={styles.analyticsRow}>
+    <Text style={styles.analyticsLabel}>🚗 Transport</Text>
+    <Text style={styles.analyticsValue}>
+      {totalExpenses
+        ? ((transportExpenses / totalExpenses) * 100).toFixed(1)
+        : 0}
+      %
+    </Text>
+  </View>
+
+  <View style={styles.analyticsRow}>
+    <Text style={styles.analyticsLabel}>🎮 Entertainment</Text>
+    <Text style={styles.analyticsValue}>
+      {totalExpenses
+        ? ((entertainmentExpenses / totalExpenses) * 100).toFixed(1)
+        : 0}
+      %
+    </Text>
+  </View>
+
+  <View style={styles.analyticsRow}>
+    <Text style={styles.analyticsLabel}>💵 Bills</Text>
+    <Text style={styles.analyticsValue}>
+      {totalExpenses
+        ? ((billsExpenses / totalExpenses) * 100).toFixed(1)
+        : 0}
+      %
+    </Text>
+  </View>
+
+  <View style={styles.analyticsRow}>
+    <Text style={styles.analyticsLabel}>✈️ Travel</Text>
+    <Text style={styles.analyticsValue}>
+      {totalExpenses
+        ? ((travelExpenses / totalExpenses) * 100).toFixed(1)
+        : 0}
+      %
+    </Text>
+  </View>
+
+  <View style={styles.analyticsRow}>
+    <Text style={styles.analyticsLabel}>🧩 Other</Text>
+    <Text style={styles.analyticsValue}>
+      {totalExpenses
+        ? ((otherExpenses / totalExpenses) * 100).toFixed(1)
+        : 0}
+      %
+    </Text>
+  </View>
+</View>
+
+
         {Object.keys(groupedExpenses).length === 0 ? (
           <View style={styles.emptyContainer}>
             <View style={styles.emptyIcon}>
@@ -382,5 +511,61 @@ const styles = StyleSheet.create({
     color: "#94A3B8",
     fontSize: 13,
     marginTop: 6,
+  },
+
+  analyticsCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 24,
+    padding: 20,
+    marginTop: 16,
+    marginBottom: 24,
+  
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+  
+    elevation: 4,
+  },
+  
+  analyticsHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 18,
+  },
+  
+  analyticsTitle: {
+    marginLeft: 8,
+    marginBottom : 7,
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#111827",
+  },
+  
+  analyticsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  
+    backgroundColor: "#F8FAFC",
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 10,
+  },
+  
+  analyticsLabel: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#334155",
+  },
+  
+  analyticsValue: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#10B981",
   },
 });
